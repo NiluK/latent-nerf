@@ -1,4 +1,5 @@
 import sys
+import json
 from pathlib import Path
 from typing import Tuple, Any, Dict, Callable, Union, List
 
@@ -167,6 +168,8 @@ class Trainer:
             all_preds = []
             all_preds_normals = []
             all_preds_depth = []
+            # frames = []
+            
 
         for i, data in enumerate(dataloader):
             with torch.cuda.amp.autocast(enabled=self.cfg.optim.fp16):
@@ -179,24 +182,51 @@ class Trainer:
                 all_preds.append(pred)
                 all_preds_normals.append(pred_normals)
                 all_preds_depth.append(pred_depth)
+                if not self.cfg.log.skip_rgb:
+                    Image.fromarray(pred).save(save_path / f"r_{i}.png")
+                Image.fromarray(pred_normals).save(save_path / f"r_{1}_normal_0000.png")
+                Image.fromarray(pred_depth).save(save_path / f"r_{i}_depth_0000.png")
+
+                #   # Get the transform matrix and filepath from the data object
+                # poses = data['poses']
+                # filepath = f"./r_{i}" 
+                # # Convert the tensor to a numpy array and save it as a JSON file
+                # poses = poses.cpu().numpy()
+                # data = {
+                #     'file_path': filepath,
+                #     'transform_matrix': poses.tolist(),
+                # }
+                # frames.append(data)
+                
             else:
                 if not self.cfg.log.skip_rgb:
-                    Image.fromarray(pred).save(save_path / f"{self.train_step}_{i:04d}_rgb.png")
-                Image.fromarray(pred_normals).save(save_path / f"{self.train_step}_{i:04d}_normals.png")
-                Image.fromarray(pred_depth).save(save_path / f"{self.train_step}_{i:04d}_depth.png")
+                         Image.fromarray(pred).save(save_path / f"r_{i}.png")
+                Image.fromarray(pred_normals).save(save_path / f"r_{1}_normal_{self.train_step}.png")
+                Image.fromarray(pred_depth).save(save_path / f"r_{i}_depth_{self.train_step}.png")
+
 
         if save_as_video:
             all_preds = np.stack(all_preds, axis=0)
             all_preds_normals = np.stack(all_preds_normals, axis=0)
             all_preds_depth = np.stack(all_preds_depth, axis=0)
 
+            
+    
+            
             dump_vid = lambda video, name: imageio.mimsave(save_path / f"{self.train_step}_{name}.mp4", video, fps=25,
                                                            quality=8, macro_block_size=1)
 
             if not self.cfg.log.skip_rgb:
                 dump_vid(all_preds, 'rgb')
-            dump_vid(all_preds_normals, 'normals')
-            dump_vid(all_preds_depth, 'depth')
+            # dump_vid(all_preds_normals, 'normals')
+            # dump_vid(all_preds_depth, 'depth')
+
+            # print(frames)
+
+            # with open(save_path / f"{self.train_step}_{i:04d}_transforms.json", 'w') as f:
+            #         json.dump({
+            #             "frames": frames
+            #         }, f)
         logger.info('Done!')
 
     def full_eval(self):

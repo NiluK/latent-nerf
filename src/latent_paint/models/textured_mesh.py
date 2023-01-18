@@ -80,6 +80,7 @@ class TexturedMeshModel(nn.Module):
 
     def init_texture_map(self):
         cache_path = self.opt.log.exp_dir
+        print(cache_path)
         vt_cache, ft_cache = cache_path / 'vt.pth', cache_path / 'ft.pth'
         if self.mesh.vt is not None and self.mesh.ft is not None \
                 and self.mesh.vt.shape[0] > 0 and self.mesh.ft.min() > -1:
@@ -94,6 +95,7 @@ class TexturedMeshModel(nn.Module):
             import xatlas
             v_np = self.mesh.vertices.cpu().numpy()
             f_np = self.mesh.faces.int().cpu().numpy()
+
             atlas = xatlas.Atlas()
             atlas.add_mesh(v_np, f_np)
             chart_options = xatlas.ChartOptions()
@@ -185,6 +187,7 @@ class TexturedMeshModel(nn.Module):
             return self.render_train(theta, phi, radius)
 
     def render_train(self, theta, phi, radius):
+
         if self.latent_mode:
             texture_img = self.texture_img
             background_sphere_colors = self.background_sphere_colors
@@ -225,7 +228,7 @@ class TexturedMeshModel(nn.Module):
             texture_img = decode_func(self.texture_img)
         else:
             texture_img = self.texture_img_rgb_finetune
-
+    
         pred_features, mask = self.renderer.render_single_view_texture(self.mesh.vertices,
                                                                        self.mesh.faces,
                                                                        self.face_attributes,

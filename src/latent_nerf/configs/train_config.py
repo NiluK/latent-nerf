@@ -17,7 +17,7 @@ class GuideConfig:
     # A Textual-Inversion concept to use
     concept_name: Optional[str] = None
     # A huggingface diffusion model to use
-    diffusion_name: str = 'CompVis/stable-diffusion-v1-4'
+    diffusion_name: str = 'runwayml/stable-diffusion-v1-5'
     # Guiding mesh
     shape_path: Optional[str] = None
     # Scale of mesh in 1x1x1 cube

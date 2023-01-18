@@ -14,7 +14,7 @@ from loguru import logger
 import time
 
 class StableDiffusion(nn.Module):
-    def __init__(self, device, model_name='CompVis/stable-diffusion-v1-4',concept_name=None, latent_mode=True):
+    def __init__(self, device, model_name='runwayml/stable-diffusion-v1-5',concept_name=None, latent_mode=True):
         super().__init__()
 
         try:

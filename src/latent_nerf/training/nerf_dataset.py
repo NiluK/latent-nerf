@@ -179,6 +179,7 @@ class NeRFDataset:
             'rays_o': rays['rays_o'],
             'rays_d': rays['rays_d'],
             'dir': dirs,
+            'poses': poses,
             'fixed_viewpoint': fixed_viewpoint,
         }
 

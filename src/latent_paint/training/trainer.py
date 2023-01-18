@@ -176,8 +176,10 @@ class Trainer:
     def full_eval(self):
         try:
             self.evaluate(self.dataloaders['val_large'], self.final_renders_path, save_as_video=True)
-        except:
+        except Exception as e:
+
             logger.error('failed to save result video')
+            print(e)
 
         if self.cfg.log.save_mesh:
             save_path = make_path(self.exp_path / 'mesh')
